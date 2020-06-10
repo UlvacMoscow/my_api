@@ -29,6 +29,13 @@ class Item(Resource):
 		items.append(item)
 		return item, 201
 
+	def delete(self, name):
+		for idx, item in enumerate(items):
+			if name == item['name']:
+				items.pop(idx)
+				return {"message": "deleted item"}
+
+
 
 class ItemsList(Resource):
 	def get(self):
