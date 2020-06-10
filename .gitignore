@@ -1,3 +1,4 @@
 /env
 .vscode
 test_app*
+/__pycache__

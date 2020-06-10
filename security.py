@@ -8,9 +8,9 @@ users = [
 username_maping = {u.username: u for u in users}
 id_maping = {u.id: u for u in users}
 
-def authenticate(username, passord):
+def authenticate(username, password):
 	user = username_maping.get(username, None)
-	if user and safe_str_cmp(user.passord, password):
+	if user and safe_str_cmp(user.password, password):
 		return user
 
 def identity(payload):
