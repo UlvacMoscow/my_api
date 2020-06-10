@@ -35,6 +35,19 @@ class Item(Resource):
 				items.pop(idx)
 				return {"message": "deleted item"}
 
+	def put(self, name):
+		data = request.get_json()
+		item = None
+		for it in items:
+			if it["name"] == name:
+				item = it
+
+		if item is None:
+			item = {"name": name, "price": data["price"]}
+			items.append(item)
+		else:
+			item.update(data)
+		return item
 
 
 class ItemsList(Resource):
