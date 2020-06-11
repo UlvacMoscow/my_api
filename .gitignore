@@ -1,5 +1,5 @@
 /env
 .vscode
-test_app*
 /__pycache__
 *.db
+test*
