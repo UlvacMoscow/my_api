@@ -39,6 +39,15 @@ class Item(Resource):
 		data = Item.parser.parse_args()
 		item = {"name": name, "price": data["price"]}
 
+		try:
+			self.insert(item)
+		except:
+			return {"message": "An error occurred insertitng the item. "}, 500 #internal server error
+		
+		return item, 201
+
+	@classmethod
+	def insert(self, item):
 		connection = sqlite3.connect("data.db")
 		cursor = connection.cursor()
 
@@ -48,28 +57,52 @@ class Item(Resource):
 
 		connection.commit()
 		connection.close()
-		
-		return item, 201
 
 	def delete(self, name):
-		for idx, item in enumerate(items):
-			if name == item['name']:
-				items.pop(idx)
-				return {"message": "deleted item"}
+		connection = sqlite3.connect("data.db")
+		cursor = connection.cursor()
+
+		query = "DELETE FROM items WHERE name=?"
+
+		cursor.execute(query, (name,))
+
+		connection.commit()
+		connection.close()
+
+		return {"message": "deleted item"}
 
 	def put(self, name):
 		data = Item.parser.parse_args()
-		item = None
-		for it in items:
-			if it["name"] == name:
-				item = it
+		item = self.find_by_name(name)
+		update_item = {"name": name, "price": data["price"]}
+		
+		if item:
+			try:
+				self.insert(update_item)
+			except:
+				return {"message": "An error occurred insertitng the item. "}, 500 #internal server error
 
-		if item is None:
-			item = {"name": name, "price": data["price"]}
-			items.append(item)
 		else:
-			item.update(data)
-		return item
+			try:
+				self.update(update_item)
+			except:
+				return {"message": "An error occurred updating the item. "}, 500 #internal server error
+		return update_item
+
+	@classmethod
+	def update(cls, item):
+		connection = sqlite3.connect("data.db")
+		cursor = connection.cursor()
+
+		query = "UPDATE items SET price=? WHERE name=?"
+
+		cursor.execute(query, (item["price"], item["name"],))
+
+		connection.commit()
+		connection.close()
+
+		return {"message": "deleted item"}
+
 
 
 class ItemsList(Resource):
