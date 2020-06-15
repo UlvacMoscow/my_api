@@ -10,41 +10,48 @@ class UserModel(db.Model):
 	password = db.Column(db.String(80))
 	
 
-	def __init__(self, _id, username, password):
-		self.id = _id
+	def __init__(self, username, password):
 		self.username = username
 		self.password = password
 
+	def save_to_db(self):
+		db.session.add(self)
+		db.session.commit()
+
 	@classmethod
 	def find_by_username(cls, username):
-		connection = sqlite3.connect("data.db")
-		cursor = connection.cursor()
+		return cls.query.filter_by(username=username).first()
+		
+		# connection = sqlite3.connect("data.db")
+		# cursor = connection.cursor()
 
-		query_username = "SELECT * FROM users WHERE username=?"
-		result = cursor.execute(query_username, (username,))
-		row = result.fetchone()
+		# query_username = "SELECT * FROM users WHERE username=?"
+		# result = cursor.execute(query_username, (username,))
+		# row = result.fetchone()
 
-		if row:
-			user = cls(*row)
-		else:
-			user = None
+		# if row:
+		# 	user = cls(*row)
+		# else:
+		# 	user = None
 
-		connection.close()
-		return user
+		# connection.close()
+		# return user
 
 	@classmethod
 	def find_by_id(cls, _id):
-		connection = sqlite3.connect("data.db")
-		cursor = connection.cursor()
+		return cls.query.filter_by(id=_id).first()
+		
+		# connection = sqlite3.connect("data.db")
+		# cursor = connection.cursor()
 
-		query_username = "SELECT * FROM users WHERE id=?"
-		result = cursor.execute(query_username, (_id,))
-		row = result.fetchone()
+		# query_username = "SELECT * FROM users WHERE id=?"
+		# result = cursor.execute(query_username, (_id,))
+		# row = result.fetchone()
 
-		if row:
-			user = cls(*row)
-		else:
-			user = None
+		# if row:
+		# 	user = cls(*row)
+		# else:
+		# 	user = None
 
-		connection.close()
-		return user
+		# connection.close()
+		# return user
