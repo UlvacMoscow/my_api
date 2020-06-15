@@ -18,38 +18,46 @@ class ItemModel(db.Model):
 
 	@classmethod
 	def find_by_name(cls, name):
-		connection = sqlite3.connect("data.db")
-		cursor = connection.cursor()
+		#with sqlalchemy
+		return cls.query.filter_by(name=name)
 
-		query = "SELECT * FROM items WHERE name=?"
-		result = cursor.execute(query, (name,))
-		row = result.fetchone()
-		connection.close()
+		#without sqlalchemy
+		# connection = sqlite3.connect("data.db")
+		# cursor = connection.cursor()
 
-		if row:
-			return cls(*row)
+		# query = "SELECT * FROM items WHERE name=?"
+		# result = cursor.execute(query, (name,))
+		# row = result.fetchone()
+		# connection.close()
 
-	def insert(self, item):
-		connection = sqlite3.connect("data.db")
-		cursor = connection.cursor()
+		# if row:
+		# 	return cls(*row)
 
-		query = "INSERT INTO items VALUES(?, ?)"
+	def save_to_db(self, item):
+		db.session.add(self)
+		db.session.commit()
 
-		cursor.execute(query, (self.name, self.price,))
+		# connection = sqlite3.connect("data.db")
+		# cursor = connection.cursor()
 
-		connection.commit()
-		connection.close()
+		# query = "INSERT INTO items VALUES(?, ?)"
 
-	@classmethod
-	def update(cls, item):
-		connection = sqlite3.connect("data.db")
-		cursor = connection.cursor()
+		# cursor.execute(query, (self.name, self.price,))
 
-		query = "UPDATE items SET price=? WHERE name=?"
+		# connection.commit()
+		# connection.close()
 
-		cursor.execute(query, (self.price, self.name,))
+	def delete_from_db(cls, item):
+		db.session.delete(self)
+		db.session.commit()
+		# connection = sqlite3.connect("data.db")
+		# cursor = connection.cursor()
 
-		connection.commit()
-		connection.close()
+		# query = "UPDATE items SET price=? WHERE name=?"
 
-		return {"message": "deleted item"}
+		# cursor.execute(query, (self.price, self.name,))
+
+		# connection.commit()
+		# connection.close()
+
+		# return {"message": "deleted item"}
